@@ -16,6 +16,13 @@ public:
 	AFPSObjectiveActor();
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UStaticMeshComponent * MeshComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class USphereComponent* SphereComp;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
