@@ -19,7 +19,7 @@ AFPSObjectiveActor::AFPSObjectiveActor()
 	SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	SphereComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	SphereComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	SphereComp->SetupAttachment(MeshComp);
+	SphereComp->SetupAttachment(MeshComp); 
 
 	//SphereComp->OnComponentBeginOverlap(MeshComp);
 
