@@ -17,7 +17,8 @@ ALaunchPad::ALaunchPad()
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
-	MeshComp->OnComponentBeginOverlap.AddDynamic(this, &ALaunchPad::OverlapLaunchPad);
+
+	OverlapComp->OnComponentBeginOverlap.AddDynamic(this, &ALaunchPad::OverlapLaunchPad);
 
 	LaunchStrength = 1500;
 	LaunchPitchAngle = 35.0f;
@@ -25,6 +26,8 @@ ALaunchPad::ALaunchPad()
 
 void ALaunchPad::OverlapLaunchPad(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("LaunchPad OverlapLaunchPad"));
+
 	FRotator LaunchDirection = GetActorRotation();
 	LaunchDirection.Pitch += LaunchPitchAngle;
 	FVector LaunchVelocity = LaunchDirection.Vector() * LaunchStrength;
@@ -32,12 +35,16 @@ void ALaunchPad::OverlapLaunchPad(UPrimitiveComponent* OverlappedComponent, AAct
 	ACharacter* OtherCharacter = Cast<ACharacter>(OtherActor);
 	if (OtherCharacter)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Other is a character"));
+
 		OtherCharacter->LaunchCharacter(LaunchVelocity, true, true);
 
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ActivateLaunchPadEffect, GetActorLocation());
 	}
 	else if (OtherComp && OtherComp->IsSimulatingPhysics())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Other has physics"));
+
 		OtherComp->AddImpulse(LaunchVelocity, NAME_None, true);
 
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ActivateLaunchPadEffect, GetActorLocation());
