@@ -26,7 +26,6 @@ ALaunchPad::ALaunchPad()
 
 void ALaunchPad::OverlapLaunchPad(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("LaunchPad OverlapLaunchPad"));
 
 	FRotator LaunchDirection = GetActorRotation();
 	LaunchDirection.Pitch += LaunchPitchAngle;
@@ -35,7 +34,6 @@ void ALaunchPad::OverlapLaunchPad(UPrimitiveComponent* OverlappedComponent, AAct
 	ACharacter* OtherCharacter = Cast<ACharacter>(OtherActor);
 	if (OtherCharacter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Other is a character"));
 
 		OtherCharacter->LaunchCharacter(LaunchVelocity, true, true);
 
