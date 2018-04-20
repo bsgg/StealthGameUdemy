@@ -21,6 +21,8 @@ AFPSAIGuard::AFPSAIGuard()
 void AFPSAIGuard::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OriginalRotation = GetActorRotation();
 	
 }
 
@@ -47,5 +49,28 @@ void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, 
 	//UE_LOG(LogTemp, Warning, TEXT("AFPSAIGuard::OnNoiseHeard"));
 	
 	DrawDebugSphere(GetWorld(), Location, 32.0f, 12, FColor::Green, false, 10.0f);
+
+	// Get normalized direction between actor and where the noise was spawned
+	FVector direction = Location - GetActorLocation();
+	direction.Normalize();
+
+	// Get rotation from that vector, take only Yall to rotate the guard
+	FRotator NewLookAt = FRotationMatrix::MakeFromX(direction).Rotator();
+	NewLookAt.Pitch = 0.0f;
+	NewLookAt.Roll = 0.0f;
+
+	SetActorRotation(NewLookAt);
+
+	// Set timer to rotate the guard to its original rotation
+	// Celar the previous timer
+	GetWorldTimerManager().ClearTimer(TimerHandle_ResetOrientation);
+	GetWorldTimerManager().SetTimer(TimerHandle_ResetOrientation, this, &AFPSAIGuard::ResetOrientation, 3.0f, false);
+	
+}
+
+void AFPSAIGuard::ResetOrientation()
+{
+	// Reset to original rotation
+	SetActorRotation(OriginalRotation);
 }
 
