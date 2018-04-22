@@ -6,6 +6,14 @@
 #include "GameFramework/Character.h"
 #include "FPSAIGuard.generated.h"
 
+UENUM(BlueprintType)
+enum class EAIState : uint8
+{
+	Idle,
+	Suspicious,
+	Alerted
+};
+
 UCLASS()
 class FPSGAME_API AFPSAIGuard : public ACharacter
 {
@@ -29,13 +37,20 @@ protected:
 	void OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume);
 
 	FRotator OriginalRotation;
+	
 
-	FTimerHandle TimerHandle_ResetOrientation;
 	UFUNCTION()
 	void ResetOrientation();
+	FTimerHandle TimerHandle_ResetOrientation;
+
+	EAIState GuardState;
+
+	void SetGuardState(EAIState NewState);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
+	void OnStateChanged(EAIState NewState);
 
 public:	
-
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

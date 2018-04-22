@@ -36,7 +36,7 @@ void AFPSGameMode::CompletedMission(APawn* InstigatorPawn, bool bMissionSuccess)
 				APlayerController *pc = Cast<APlayerController>(InstigatorPawn->GetController());
 				if (pc != nullptr)
 				{
-					pc->SetViewTargetWithBlend(newViewTarget, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+					pc->SetViewTargetWithBlend(newViewTarget, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic); 
 				}
 			}		
 		}
