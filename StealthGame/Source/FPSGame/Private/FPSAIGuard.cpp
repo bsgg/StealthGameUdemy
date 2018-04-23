@@ -4,6 +4,8 @@
 #include "Perception/PawnSensingComponent.h"
 #include "DrawDebugHelpers.h"
 #include "FPSGameMode.h"
+#include "AI/Navigation/NavigationSystem.h"
+
 
 
 // Sets default values
@@ -26,6 +28,11 @@ void AFPSAIGuard::BeginPlay()
 	Super::BeginPlay();
 
 	OriginalRotation = GetActorRotation();
+
+	if (bPatrol)
+	{
+		MoveToNextPatrolPoint();
+	}
 	
 }
 
@@ -42,6 +49,17 @@ void AFPSAIGuard::SetGuardState(EAIState NewState)
 void AFPSAIGuard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (CurrentPatrolPoint)
+	{
+		FVector Delta = GetActorLocation() - CurrentPatrolPoint->GetActorLocation();
+		float DistanceTarget = Delta.Size();
+
+		if (DistanceTarget < 50.0f)
+		{
+			MoveToNextPatrolPoint();
+		}
+	}
 
 }
 
@@ -61,6 +79,13 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	}	
 
 	SetGuardState(EAIState::Alerted);
+
+	// When we see a pawn we don't patrol anymore
+	AController* Controller = GetController();
+	if (Controller != nullptr)
+	{
+		Controller->StopMovement();
+	}
 
 }
 
@@ -88,6 +113,13 @@ void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, 
 	GetWorldTimerManager().SetTimer(TimerHandle_ResetOrientation, this, &AFPSAIGuard::ResetOrientation, 3.0f, false);
 	
 	SetGuardState(EAIState::Suspicious);	
+
+	// When we see a pawn we don't patrol anymore
+	AController* Controller = GetController();
+	if (Controller != nullptr)
+	{
+		Controller->StopMovement();
+	}
 }
 
 void AFPSAIGuard::ResetOrientation()
@@ -98,5 +130,24 @@ void AFPSAIGuard::ResetOrientation()
 	SetActorRotation(OriginalRotation);
 
 	SetGuardState(EAIState::Idle);
+
+	if (bPatrol)
+	{
+		MoveToNextPatrolPoint();
+	}
+}
+
+void AFPSAIGuard::MoveToNextPatrolPoint()
+{
+	if (CurrentPatrolPoint == nullptr || CurrentPatrolPoint == SecondPatrolPoint)
+	{
+		CurrentPatrolPoint = FirstPatrolPoint;
+	}
+	else
+	{
+		CurrentPatrolPoint = SecondPatrolPoint;
+	}
+
+	UNavigationSystem::SimpleMoveToActor(GetController(), CurrentPatrolPoint);
 }
 

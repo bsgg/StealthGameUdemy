@@ -27,9 +27,31 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UPawnSensingComponent* PawnSensingComp;
 
+	
+	
+	//Indicates that this property can be edited by property windows, but only on instances, not on archetypes
+	// Archetype == Blueprint asset == Prefab (Unity3D).
+	UPROPERTY(EditInstanceOnly, Category = "AI")
+	bool bPatrol;
+
+	// meta = (EditCondition = "bPatrol") If bPatrol is false, FirstPatrolPoint and SecondPatrolPoint become read only in the instance
+	// This varliabes are editable when bPatrol is true
+	UPROPERTY(EditInstanceOnly, Category = "AI", meta = (EditCondition = "bPatrol"))
+	AActor* FirstPatrolPoint;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI", meta = (EditCondition = "bPatrol"))
+	AActor* SecondPatrolPoint;
+
+	AActor* CurrentPatrolPoint;
+
+	void MoveToNextPatrolPoint();
+
+	
+	
 	UFUNCTION()
 	void OnPawnSeen(APawn* SeenPawn);
 
@@ -37,11 +59,12 @@ protected:
 	void OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume);
 
 	FRotator OriginalRotation;
-	
 
 	UFUNCTION()
 	void ResetOrientation();
 	FTimerHandle TimerHandle_ResetOrientation;
+
+
 
 	EAIState GuardState;
 
