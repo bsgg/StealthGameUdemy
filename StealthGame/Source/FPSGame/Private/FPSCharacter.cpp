@@ -48,6 +48,20 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
 
+void AFPSCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// Update the rotation of the camera when it's not locally controlled, (any other client)
+	if (!IsLocallyControlled())
+	{
+		FRotator NewRot = CameraComponent->RelativeRotation;
+		NewRot.Pitch = RemoteViewPitch * 360.0f / 255.0f; // Convert between 0 and 255 degres in Unreal
+
+		CameraComponent->SetRelativeRotation(NewRot);
+	}
+}
+
 
 void AFPSCharacter::Fire()
 {
