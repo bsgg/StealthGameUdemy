@@ -43,7 +43,7 @@ void AFPSObjectiveActor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor); 
 
-	PlayEffects();
+	PlayEffects(); 
 
 	// Only runs if it's server
 	if (Role == ROLE_Authority)

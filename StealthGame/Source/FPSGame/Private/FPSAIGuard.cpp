@@ -5,6 +5,7 @@
 #include "DrawDebugHelpers.h"
 #include "FPSGameMode.h"
 #include "AI/Navigation/NavigationSystem.h"
+#include "Net/UnrealNetwork.h"
 
 
 
@@ -36,13 +37,18 @@ void AFPSAIGuard::BeginPlay()
 	
 }
 
+void AFPSAIGuard::OnRep_GuardState()
+{
+	OnStateChanged(GuardState);
+}
+
 void AFPSAIGuard::SetGuardState(EAIState NewState)
 {
 	if (GuardState == NewState) return;
 	GuardState = NewState;
 
-	OnStateChanged(GuardState);
-
+	// We call this function in server as well
+	OnRep_GuardState();
 }
 
 // Called every frame
@@ -62,6 +68,14 @@ void AFPSAIGuard::Tick(float DeltaTime)
 	}
 
 }
+
+void AFPSAIGuard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFPSAIGuard, GuardState);
+}
+
 
 void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 {

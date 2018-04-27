@@ -65,8 +65,13 @@ protected:
 	FTimerHandle TimerHandle_ResetOrientation;
 
 
-
+	UPROPERTY(ReplicatedUsing=OnRep_GuardState)
 	EAIState GuardState;
+
+	// This funcion will be called when GuardState has any change but only in clients
+	// By default is not called in the server
+	UFUNCTION()
+	void OnRep_GuardState(); 
 
 	void SetGuardState(EAIState NewState);
 
