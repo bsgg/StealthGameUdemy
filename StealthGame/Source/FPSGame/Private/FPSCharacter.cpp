@@ -55,7 +55,7 @@ void AFPSCharacter::Tick(float DeltaTime)
 	// Update the rotation of the camera when it's not locally controlled, (any other client)
 	if (!IsLocallyControlled())
 	{
-		FRotator NewRot = CameraComponent->RelativeRotation;
+		FRotator NewRot = CameraComponent->RelativeRotation;  
 		NewRot.Pitch = RemoteViewPitch * 360.0f / 255.0f; // Convert between 0 and 255 degres in Unreal
 
 		CameraComponent->SetRelativeRotation(NewRot);

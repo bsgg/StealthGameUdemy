@@ -22,7 +22,7 @@ AFPSObjectiveActor::AFPSObjectiveActor()
 	SphereComp->SetupAttachment(MeshComp); 
 
 	//SphereComp->OnComponentBeginOverlap(MeshComp);
-
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -45,12 +45,16 @@ void AFPSObjectiveActor::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	PlayEffects();
 
-	AFPSCharacter* myCharacter = Cast<AFPSCharacter>(OtherActor);
-	if (myCharacter != nullptr)
+	// Only runs if it's server
+	if (Role == ROLE_Authority)
 	{
-		myCharacter->bIsCarryingObjective = true;
-		Destroy();
-	}
+		AFPSCharacter* myCharacter = Cast<AFPSCharacter>(OtherActor);
+		if (myCharacter != nullptr)
+		{
+			myCharacter->bIsCarryingObjective = true;
+			Destroy();
+		}
+	}	
 
 }
 
