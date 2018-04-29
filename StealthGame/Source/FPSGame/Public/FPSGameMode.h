@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "FPSGameMode.generated.h"
 
+// Game mode only runs on server since there is no instances of Gamemode in clients
 UCLASS()
 class AFPSGameMode : public AGameModeBase
 {

@@ -5,6 +5,7 @@
 #include "FPSCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "FPSGameState.h"
 
 AFPSGameMode::AFPSGameMode()
 {
@@ -14,20 +15,23 @@ AFPSGameMode::AFPSGameMode()
 
 	// use our custom HUD class
 	HUDClass = AFPSHUD::StaticClass();
+
+	// Specify to use gamestate class otherwise any cast will fail
+	GameStateClass = AFPSGameState::StaticClass();
 }
 
 void AFPSGameMode::CompletedMission(APawn* InstigatorPawn, bool bMissionSuccess)
 {
 	if (InstigatorPawn)
 	{
-		InstigatorPawn->DisableInput(nullptr);		
+		//InstigatorPawn->DisableInput(nullptr);		
 
 		if (SpectatingViewpointClass != nullptr)
 		{
 			// Get actors			
 			TArray<AActor*> returnedActors;
 			UGameplayStatics::GetAllActorsOfClass(this, SpectatingViewpointClass, returnedActors);
-			
+			 
 			// Change viewtarget if any valid actor found
 			if (returnedActors.Num() > 0)
 			{
@@ -46,8 +50,14 @@ void AFPSGameMode::CompletedMission(APawn* InstigatorPawn, bool bMissionSuccess)
 		}
 	}
 
-	// Call event
-	OnMissionCompleted(InstigatorPawn, bMissionSuccess);
+	// Get current gamestate 
+	AFPSGameState* GS = GetGameState<AFPSGameState>();
+	if (GS != nullptr)
+	{
+		GS->MulticastOnMissionCompleted(InstigatorPawn, bMissionSuccess);
+	}
 
-	
+
+	// Call event
+	OnMissionCompleted(InstigatorPawn, bMissionSuccess);	
 }
