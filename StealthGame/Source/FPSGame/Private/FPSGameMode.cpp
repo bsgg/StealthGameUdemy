@@ -24,8 +24,6 @@ void AFPSGameMode::CompletedMission(APawn* InstigatorPawn, bool bMissionSuccess)
 {
 	if (InstigatorPawn)
 	{
-		//InstigatorPawn->DisableInput(nullptr);		
-
 		if (SpectatingViewpointClass != nullptr)
 		{
 			// Get actors			
@@ -36,12 +34,17 @@ void AFPSGameMode::CompletedMission(APawn* InstigatorPawn, bool bMissionSuccess)
 			if (returnedActors.Num() > 0)
 			{
 				AActor* newViewTarget = returnedActors[0];
-				
-				APlayerController *pc = Cast<APlayerController>(InstigatorPawn->GetController());
-				if (pc != nullptr)
+
+				// Check all instances of player  controller
+				for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
 				{
-					pc->SetViewTargetWithBlend(newViewTarget, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic); 
-				}
+					APlayerController *PC = It->Get();
+					// We want to call all of them client and server so in this case we do not check if locally controller
+					if (PC)
+					{
+						PC->SetViewTargetWithBlend(newViewTarget, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+					}
+				}				
 			}		
 		}
 		else

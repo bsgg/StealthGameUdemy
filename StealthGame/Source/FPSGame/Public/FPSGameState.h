@@ -16,6 +16,7 @@ class FPSGAME_API AFPSGameState : public AGameStateBase
 	
 public:
 	// This will run in all clients
+	// NetMulticast = This function is both executed locally on the server and replicated to all clients, regardless of the Actor's NetOwner.
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastOnMissionCompleted(APawn* InstigatorPawn, bool bMissionSuccess);
 	
